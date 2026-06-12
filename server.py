@@ -110,7 +110,7 @@ def handle_client_commands(client_control_socket, client_data_socket, active_cli
                 client_data_socket.sendall(response.encode())
 
             else:
-                print(f"Broadcst requested by {current_username}")
+                print(f"Broadcast requested by {current_username}")
 
                 message = " ".join(parts[1:])
 
