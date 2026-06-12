@@ -7,7 +7,7 @@ BUFFER_SIZE = 65535
 
 
 def parse_server_response(response):
-    """Split 'status\n\ndata' into status and data."""
+
     parts = response.split("\n\n", 1)
     status_code = parts[0].strip()
     data = parts[1].strip() if len(parts) > 1 else ""
@@ -15,7 +15,7 @@ def parse_server_response(response):
 
 
 def receive_message(sock):
-    """Receive a server response using a large buffer to avoid truncated output."""
+
     data = sock.recv(BUFFER_SIZE)
     if data == b"":
         return ""
@@ -28,7 +28,7 @@ def command_name(command):
 
 
 def print_success_for_command(command, data):
-    """Print successful command responses using the required client output template."""
+    
     name = command_name(command)
 
     if name == "login":
@@ -75,7 +75,7 @@ def print_prompt():
 
 
 def listen_for_server_messages(data_socket, pending_commands, lock):
-    """Continuously receive DATA responses and asynchronous messages."""
+    
     while True:
         try:
             response = receive_message(data_socket)

@@ -6,20 +6,17 @@ BUFFER_SIZE = 65535
 
 
 def format_response(status_code, data=""):
-    """Return every server response in the required format."""
     if data == "":
         return f"{status_code}\n\n"
     return f"{status_code}\n\n{data}"
 
 
 def safe_send(sock, message, send_lock):
-    """Send a complete message while preventing threaded sends from interleaving."""
     with send_lock:
         sock.sendall(message.encode())
 
 
 def create_data_socket():
-    """Create a listening DATA socket on an available port."""
     data_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     data_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     data_socket.bind(("", 0))
@@ -30,7 +27,6 @@ def create_data_socket():
 
 def handle_login(parts, client_control_socket, client_data_socket,
                  active_clients, clients_lock, send_lock, current_username):
-    """Process login <username>."""
     if len(parts) != 2:
         safe_send(client_data_socket, format_response(500, "Invalid login command"), send_lock)
         return current_username
@@ -73,7 +69,6 @@ def handle_login(parts, client_control_socket, client_data_socket,
 
 
 def handle_who(client_data_socket, active_clients, clients_lock, send_lock, current_username):
-    """Process who."""
     print("Who requested. Sending users.", flush=True)
 
     if current_username is None:
@@ -88,7 +83,6 @@ def handle_who(client_data_socket, active_clients, clients_lock, send_lock, curr
 
 def handle_broadcast(parts, client_data_socket, active_clients, clients_lock,
                      send_lock, current_username):
-    """Process broadcast <message>."""
     if current_username is None:
         safe_send(client_data_socket, format_response(500, "You must login first"), send_lock)
         return
@@ -119,7 +113,6 @@ def handle_broadcast(parts, client_data_socket, active_clients, clients_lock,
 
 def handle_private(parts, client_data_socket, active_clients, clients_lock,
                    send_lock, current_username):
-    """Process private <username> <message>."""
     if current_username is None:
         safe_send(client_data_socket, format_response(500, "You must login first"), send_lock)
         return
@@ -153,7 +146,6 @@ def handle_private(parts, client_data_socket, active_clients, clients_lock,
 
 
 def handle_quit(client_data_socket, active_clients, clients_lock, send_lock, current_username):
-    """Process quit and notify remaining clients."""
     if current_username is not None:
         print(f"Quit requested by {current_username}", flush=True)
 
@@ -181,7 +173,6 @@ def handle_quit(client_data_socket, active_clients, clients_lock, send_lock, cur
 
 def handle_client_commands(client_control_socket, client_data_socket,
                            active_clients, clients_lock, send_lock):
-    """Receive commands on CONTROL and send responses on DATA."""
     current_username = None
 
     while True:
@@ -237,7 +228,6 @@ def handle_client_commands(client_control_socket, client_data_socket,
 
 def handle_new_client(client_control_socket, client_address,
                       active_clients, clients_lock, send_lock):
-    """Handle one client's connect handshake and later commands."""
     data_socket = None
     client_data_socket = None
 
