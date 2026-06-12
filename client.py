@@ -31,7 +31,7 @@ def print_response_for_command(command, status_code, data):
     if status_code == "200":
         
         if command_name == "login":
-            print(f"200 status code received. Login successful")
+            print("200 status code received. Login successful")
 
         elif command_name == "who":
             print(f"200 status code received. Users currently connected: {data}")
@@ -206,6 +206,10 @@ def main():
             continue
 
         control_socket.sendall(command.encode())
+
+        response = control_socket.recv(1024).decode()
+        status_code, data = parse_server_response(response)
+        print_response_for_command(command, status_code, data)
 
         if command.strip() == "quit":
             time.sleep(0.2)
